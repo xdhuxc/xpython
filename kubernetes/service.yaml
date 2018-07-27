@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: xdhuxc-service
+  namespace: xdhuxc
+  labels:
+    app: xdhuxc-app
+  annotations:
+    app: xdhuxc-app
+spec:
+  selector:
+    app: xdhuxc-app
+  type:
+  clusterIP:
+  sessionAffinity:
+  ports:
+  - name: xdhuxc-port
+    protocol:
+    port:
+    targetPort:
+    nodePort:
+  status:
+    loadBalancer:
+      ingress:
+      ip:
+      hostname:
