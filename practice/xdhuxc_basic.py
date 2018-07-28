@@ -29,6 +29,7 @@ def get_dir_size(base_dir):
 
     for item in os.listdir(xdhuxc_dir):
         full_path = os.path.join(xdhuxc_dir, item)
+        print(full_path)
         if os.path.isfile(full_path):
             total_size = total_size + os.path.getsize(full_path)
         elif os.path.isdir(full_path):
@@ -42,19 +43,16 @@ def get_dir_size_xdhuxc(base_dir):
 
     if not os.path.exists(xdhuxc_dir):
         print('%s 不存在。' % xdhuxc_dir)
-        return None
+        return -1
 
     for root, dirs, files in os.walk(xdhuxc_dir):
-        for xfile in files:
-            full_path = os.path.join(root, xfile)
-            total_size = total_size + os.path.getsize(full_path)
-    return total_size
 
-"""
-       
-            
-    
-"""
+        for xfile in files:
+            xdhuxc_file = unicode(xfile)
+            full_path = os.path.join(root, xdhuxc_file)
+            total_size = total_size + get_dir_size_xdhuxc(xdhuxc_file)
+
+    return total_size
 
 """
 在 Python 中，False, 0, '', [], {}, ()都可以视为假。
@@ -62,7 +60,8 @@ def get_dir_size_xdhuxc(base_dir):
 
 if __name__ == '__main__':
 
-    #total_size = 0L
-    src_dir = 'C:\\Users\\wanghuan\\Desktop\\电子书'
-    #print("get_dir_size: %d" % get_dir_size(src_dir))
-    print("get_dir_size_xdhuxc: %d" % get_dir_size_xdhuxc(src_dir))
+    total_size = 0L
+    src_dir = 'C:\\Users\\Administrator\\Desktop\yztc'
+    #print(get_dir_size(src_dir))
+    print(get_dir_size_xdhuxc(src_dir))
+    sys.getdefaultencoding()
