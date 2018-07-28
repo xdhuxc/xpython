@@ -29,7 +29,6 @@ def get_dir_size(base_dir):
 
     for item in os.listdir(xdhuxc_dir):
         full_path = os.path.join(xdhuxc_dir, item)
-        print(full_path)
         if os.path.isfile(full_path):
             total_size = total_size + os.path.getsize(full_path)
         elif os.path.isdir(full_path):
@@ -46,11 +45,10 @@ def get_dir_size_xdhuxc(base_dir):
         return None
 
     for root, dirs, files in os.walk(xdhuxc_dir):
-
         for xfile in files:
             full_path = os.path.join(root, xfile)
-            print(full_path)
-
+            total_size = total_size + os.path.getsize(full_path)
+    return total_size
 
 """
        
@@ -64,7 +62,7 @@ def get_dir_size_xdhuxc(base_dir):
 
 if __name__ == '__main__':
 
-    total_size = 0L
+    #total_size = 0L
     src_dir = 'C:\\Users\\wanghuan\\Desktop\\电子书'
-    #print(get_dir_size(src_dir))
-    get_dir_size_xdhuxc(src_dir)
+    #print("get_dir_size: %d" % get_dir_size(src_dir))
+    print("get_dir_size_xdhuxc: %d" % get_dir_size_xdhuxc(src_dir))

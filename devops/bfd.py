@@ -6,7 +6,7 @@ import sys
 import getopt
 
 reload(sys)
-sys.setdefaultencoding('utf-8')
+sys.setdefaultencoding('utf-8')  # 为了解决目录和文件名中文编码问题，
 
 # https://blog.csdn.net/beautygao/article/details/79231571
 '''
@@ -51,20 +51,14 @@ def get_dir_size(base_dir):
     for root, dirs, files in os.walk(xdhuxc_dir):
         # 处理root目录下的所有文件
         for xfile in files:
-            print(os.path.join(root, xfile))
             total_size = total_size + os.path.getsize(os.path.join(root, xfile))
-
-        # 处理root目录下的子目录
-        for xdir in dirs:
-            print(os.path.join(root, xdir))
-            get_dir_size(os.path.join(root, xdir))
 
     return total_size
 
 
 def readable(file_size):
     """
-
+    以可视化的形式显示文件和目录大小。
     :param file_size:
     :return:
     """
