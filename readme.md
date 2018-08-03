@@ -16,3 +16,8 @@ pip install elasticsearch
 ```angular2html
 pip install kafka
 ```
+### 安装 mysql工具包
+> PyMySQL为替代Python-MySQL而生，纯python打造，接口与Python-MySQL兼容，安装方便，支持Python3。
+```angular2html
+pip install pymysql
+```
