@@ -59,6 +59,8 @@ def get_dir_size_xdhuxc(base_dir):
 """
 
 if __name__ == '__main__':
+    xdhuxc = '123K'
+    print(type(int(xdhuxc[:-1])))
 
     total_size = 0L
     src_dir = 'C:\\Users\\Administrator\\Desktop\yztc'
