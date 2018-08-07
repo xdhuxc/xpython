@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-src = 'C:\\Users\\Administrator\\Desktop\\20180711.txt'
+src = 'C:\\Users\\wanghuan\\Desktop\\temp.txt'
 xdhuxc_file = open(src)
 # 逐行读取文件
 for line in xdhuxc_file:
@@ -31,3 +31,6 @@ with open(src) as xdhuxc_file:
 在这段代码中，无论 with 中的代码块在执行的过程中发生任何情况，文件最终都会被关闭。
 如果代码块在执行的过程中发生了一个异常，那么在这个异常被抛出前，程序会先将被打开的文件关闭。
 """
+xdhuxc_file = open(src)
+lines = xdhuxc_file.readlines() # 返回一个list，依次为文件中的每一行
+print(lines)

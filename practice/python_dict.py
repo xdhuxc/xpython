@@ -30,3 +30,8 @@ for (key, value) in xdhuxc_dict.items():
 
 xdhuxc_dict.update({'d': '2'})
 print(xdhuxc_dict)
+
+
+xdhuxc_dict['wanghuan'] = '123456'
+xdhuxc_dict['lalala'] = '156'
+print(xdhuxc_dict)
