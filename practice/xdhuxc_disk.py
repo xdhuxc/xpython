@@ -4,6 +4,7 @@
 import subprocess
 
 # https://blog.csdn.net/huguangshanse00/article/details/17053789
+# http://blog.51cto.com/dragonball/1413369
 
 def uname():
     uname = 'uname'
