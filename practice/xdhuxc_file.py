@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+
 src = 'C:\\Users\\Administrator\\Desktop\\20180711.txt'
 xdhuxc_file = open(src)
 # 逐行读取文件
