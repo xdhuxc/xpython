@@ -63,6 +63,9 @@ clean_dir_log(){
     dir_name=$1
     before_days = $2
     find ${dir_name} -type f -ctime +${before_days} -exec rm -f {} \;
+    # 分钟则为 -cmin
+    # -size +512k 查找大于512k的文件
+    # -size -512k 查找小于512k的文件
 }
 
 
