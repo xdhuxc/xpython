@@ -25,6 +25,11 @@ def memory_stat():
     return memory
 
 
+def cpu_stat():
+    print()
+
+
+
 if __name__ == '__main__':
     memory_info = memory_stat()
     for key, value in memory_info.items():
