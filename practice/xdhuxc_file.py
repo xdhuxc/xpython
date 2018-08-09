@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-src = 'C:\\Users\\wanghuan\\Desktop\\temp.txt'
+src = './temp.txt'
 xdhuxc_file = open(src)
 # 逐行读取文件
 for line in xdhuxc_file:
@@ -34,3 +34,9 @@ with open(src) as xdhuxc_file:
 xdhuxc_file = open(src)
 lines = xdhuxc_file.readlines() # 返回一个list，依次为文件中的每一行
 print(lines)
+
+temp_line = xdhuxc_file.read()
+print(temp_line)
+
+for item in temp_line:
+    print(item)
