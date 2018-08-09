@@ -3,6 +3,8 @@
 
 import os
 
+import xdhuxc_util
+
 # https://blog.csdn.net/huguangshanse00/article/details/17053789
 # http://blog.51cto.com/dragonball/1413369
 # https://blog.csdn.net/dearbaba_8520/article/details/80662181
@@ -18,8 +20,8 @@ def memory_stat():
     memory = {}
     with open('C:\\Users\\wanghuan\\Desktop\\meminfo') as men_info:
         for line in men_info:
-            # print(line),
-            memory_key = line.split(':')[0] # 通过指定分隔符对字符串进行切片，默认为：默认为所有的空字符，包括空格、换行(\n)、制表符(\t)等。
+            # 通过指定分隔符对字符串进行切片，默认为：默认为所有的空字符，包括空格、换行(\n)、制表符(\t)等。
+            memory_key = line.split(':')[0]
             memory_value = line.split(':')[1].split()[0]
             memory[memory_key] = long(memory_value) * 1024.0
 
@@ -84,22 +86,24 @@ def disk_stat(path):
     disk_info = os.statvfs(path)
     total_disk_space = disk_info.f_bsize * disk_info.f_blocks
     disk_dir['total_disk_space'] = total_disk_space
-    free_disk_space = disk_info.f_bsize * disk_info.f_bavail
-    disk_dir['free_disk_space'] = disk_info.f_bsize * disk_info.f_bavail
-    used_disk_space = disk_info.f_bsize * disk_info.f_bfree
-    disk_dir['used_disk_space'] = disk_info.f_bsize * disk_info.f_bfree
-    disk_dir['used_percent'] = float(used_disk_space) / total_disk_space
-    disk_dir['free_percent'] = float(free_disk_space) / total_disk_space
+    free_disk_space = disk_info.f_bsize * disk_info.f_bfree
+    disk_dir['free_disk_space'] = free_disk_space
+    used_disk_space = total_disk_space - free_disk_space
+    disk_dir['used_disk_space'] = used_disk_space
+    disk_dir['used_percent'] = float(used_disk_space) / float(total_disk_space)
+    disk_dir['free_percent'] = float(free_disk_space) / float(total_disk_space)
     return disk_dir
 
 
 def readable(file_size):
+    file_size = float(file_size)
     """
     以可视化的形式显示文件和目录大小。
     :param file_size:
     :return:
     """
-    k, m, g, t, p = 1024, 1024**2, 1024**3, 1024**4, 1024**5
+    # 此处待优化
+    k, m, g, t, p = float(1024), float(1024**2), float(1024**3), float(1024**4), float(1024**5)
     if file_size < k:
         return format(file_size, '.2f') + 'B'
     elif file_size < m:
@@ -115,6 +119,17 @@ def readable(file_size):
 
 
 if __name__ == '__main__':
+    """
+    检测以下指标：
+    1、CPU使用率
+    2、内存使用率，超过80%报警
+    3、平均负载过高报警
+    4、磁盘空间超过80%报警
+
+    报警方式包括：邮件、短信、微信接口等。
+
+
+    """
     disk_info = disk_stat('/data')
     total_disk_space = readable(disk_info['total_disk_space'])
     free_disk_space = readable(disk_info['free_disk_space'])

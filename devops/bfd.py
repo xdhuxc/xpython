@@ -58,12 +58,13 @@ def get_dir_size(base_dir):
 
 
 def readable(file_size):
+    file_size = float(file_size)
     """
     以可视化的形式显示文件和目录大小。
     :param file_size:
     :return:
     """
-    k, m, g, t, p = 1024, 1024**2, 1024**3, 1024**4, 1024**5
+    k, m, g, t, p = float(1024), float(1024**2), float(1024**3), float(1024**4), float(1024**5)
     if file_size < k:
         return format(file_size, '.2f') + 'B'
     elif file_size < m:
