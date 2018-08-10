@@ -3,8 +3,6 @@
 
 import os
 
-import xdhuxc_util
-
 # https://blog.csdn.net/huguangshanse00/article/details/17053789
 # http://blog.51cto.com/dragonball/1413369
 # https://blog.csdn.net/dearbaba_8520/article/details/80662181
@@ -18,8 +16,10 @@ def memory_stat():
     :return: memory 字典，包含当前机器所有内存参数及当前值信息，单位为：B。
     """
     memory = {}
-    with open('C:\\Users\\wanghuan\\Desktop\\meminfo') as men_info:
+    with open('/proc/meminfo') as men_info:
         for line in men_info:
+            if len(line) < 2:
+                continue
             # 通过指定分隔符对字符串进行切片，默认为：默认为所有的空字符，包括空格、换行(\n)、制表符(\t)等。
             memory_key = line.split(':')[0]
             memory_value = line.split(':')[1].split()[0]
@@ -38,11 +38,13 @@ def cpu_hardware_stat():
     """
     cpu_hardware = []
     per_cpu = {}
-    with open('') as cpu_hardware_info:
+    with open('/proc/cpuinfo') as cpu_hardware_info:
         for line in cpu_hardware_info:
             if line == '\n':
                 cpu_hardware.append(per_cpu)
                 per_cpu = {}
+            if len(line) < 2:
+                continue
             cpu_hardware_key = line.split(':')[0].rstrip()  # 删除字符串末尾指定的字符，默认为空格。
             cpu_hardware_value = line.split(':')[1]
             per_cpu[cpu_hardware_key] = cpu_hardware_value
@@ -55,9 +57,6 @@ def cpu_hardware_stat():
 def cpu_use_stat():
 
     print()
-
-
-
 
 
 def load_average():
@@ -130,6 +129,44 @@ def readable(file_size):
         return format((file_size / p), '.2f') + 'PB'
 
 
+def test_disk_stat(path):
+    disk_info = disk_stat(path)
+    total_disk_space = readable(disk_info['total_disk_space'])
+    free_disk_space = readable(disk_info['free_disk_space'])
+    used_disk_space = readable(disk_info['used_disk_space'])
+    used_percent = disk_info['used_percent']
+    free_percent = disk_info['free_percent']
+    print('total_disk_space: %s' % total_disk_space)
+    print('free_disk_space: %s' % free_disk_space)
+    print('used_disk_space: %s' % used_disk_space)
+    print('used_percent: %s' % used_percent)
+    print('free_percent: %s' % free_percent)
+
+
+def test_memory_stat():
+    memory_info = memory_stat()
+    print('内存总量：%s' % readable(memory_info['MemTotal']))
+    print('已使用内存：%s' % readable(memory_info['MemUsed']))
+    print('空余内存：%s' % readable(memory_info['MemFree']))
+    print('Buffers：%s' % readable(memory_info['Buffers']))
+    print('Cached：%s' % readable(memory_info['Cached']))
+    print('可用内存：%s' % readable(memory_info['MemAvailable']))
+    print('内存使用率：%s' % memory_info['used_percent'])
+
+
+def test_load_average():
+    load_avg = load_average()
+    load_average_1 = load_avg['load_average_1']
+    print('过去1分钟的平均进程数：%s' % load_average_1)
+    print('过去5分钟的平均进程数：%s' % load_avg['load_average_5'])
+    print('过去15分钟的平均进程数：%s' % load_avg['load_average_15'])
+    print('正在运行的进程数：%s' % load_avg['running_process_number'])
+    print('进程总数：%s' % load_avg['total_process_number'])
+    print('最后一个运行的进程ID：%s' % load_avg['last_pid'])
+    cpu_hardware = cpu_hardware_stat()
+    print('每一核CPU在过去1分钟内的负载：%.4f' % (float(load_average_1) / float(len(cpu_hardware))))
+
+
 if __name__ == '__main__':
     """
     检测以下指标：
@@ -143,14 +180,10 @@ if __name__ == '__main__':
     ③、短信
     ④、微信接口
     """
-    disk_info = disk_stat('/data')
-    total_disk_space = readable(disk_info['total_disk_space'])
-    free_disk_space = readable(disk_info['free_disk_space'])
-    used_disk_space = readable(disk_info['used_disk_space'])
-    used_percent = disk_info['used_percent']
-    free_percent = disk_info['free_percent']
-    print('total_disk_space: %d' % total_disk_space)
-    print('free_disk_space: %d' % free_disk_space)
-    print('used_disk_space: %d' % used_disk_space)
-    print('used_percent: %d' % used_percent)
-    print('free_percent: %d' % free_percent)
+    print('内存信息：')
+    test_memory_stat()
+    print('磁盘信息：')
+    test_disk_stat('/data')
+    test_disk_stat('/')
+    print('负载信息：')
+    test_load_average()
