@@ -26,10 +26,16 @@ def memory_stat():
             memory[memory_key] = long(memory_value) * 1024.0
 
     memory['MemUsed'] = memory['MemTotal'] - memory['MemFree'] - memory['Buffers'] - memory['Cached']
+    # 计算内存使用率等
+    memory['used_percent'] = format(float(memory['MemUsed']) / float(memory['MemTotal']), '.2f')
     return memory
 
 
 def cpu_hardware_stat():
+    """
+    获取CPU相关信息
+    :return:
+    """
     cpu_hardware = []
     per_cpu = {}
     with open('') as cpu_hardware_info:
@@ -44,28 +50,33 @@ def cpu_hardware_stat():
     return cpu_hardware
 
 
+# 参考资料
+# http://www.blogjava.net/fjzag/articles/317773.html
 def cpu_use_stat():
 
     print()
 
 
-def loadavg():
-    load_avg = {}
+
+
+
+def load_average():
+    load_average = {}
     with open('/proc/loadavg') as xfile:
         for line in xfile:
             # 系统在过去1分钟内运行队列中的平均进程数
-            load_avg['load_average_1'] = line.split()[0]
+            load_average['load_average_1'] = line.split()[0]
             # 系统在过去5分钟内运行队列中的平均进程数
-            load_avg['load_average_5'] = line.split()[1]
+            load_average['load_average_5'] = line.split()[1]
             # 系统在过去15分钟内运行队列中的平均进程数
-            load_avg['load_average_15'] = line.split()[2]
+            load_average['load_average_15'] = line.split()[2]
             # 正在运行的进程数
-            load_avg['running_process_number'] = line.split()[3].split('/')[0]
+            load_average['running_process_number'] = line.split()[3].split('/')[0]
             # 进程总数
-            load_avg['total_process_number'] = line.split()[3].split('/')[1]
+            load_average['total_process_number'] = line.split()[3].split('/')[1]
             # 最近运行的进程ID号
-            load_avg['last_pid'] = line.split()[4]
-    return load_avg
+            load_average['last_pid'] = line.split()[4]
+    return load_average
 
 
 def disk_stat(path):
@@ -90,8 +101,9 @@ def disk_stat(path):
     disk_dir['free_disk_space'] = free_disk_space
     used_disk_space = total_disk_space - free_disk_space
     disk_dir['used_disk_space'] = used_disk_space
-    disk_dir['used_percent'] = float(used_disk_space) / float(total_disk_space)
-    disk_dir['free_percent'] = float(free_disk_space) / float(total_disk_space)
+    # 保留两位小数
+    disk_dir['used_percent'] = format(float(used_disk_space) / float(total_disk_space), '.2f')
+    disk_dir['free_percent'] = format(float(free_disk_space) / float(total_disk_space), '.2f')
     return disk_dir
 
 
@@ -122,13 +134,14 @@ if __name__ == '__main__':
     """
     检测以下指标：
     1、CPU使用率
-    2、内存使用率，超过80%报警
-    3、平均负载过高报警
-    4、磁盘空间超过80%报警
-
-    报警方式包括：邮件、短信、微信接口等。
-
-
+    2、内存使用率，超过80%报警，从memory_stat()获取的字典中取值判断
+    3、平均负载过高报警，从load_average()中获取负载信息，再从cpu_hardware_stat()中获取CPU信息，计算平均负载
+    4、磁盘空间超过80%报警，从disk_stat()中获取指定目录下磁盘使用情况
+    报警方式包括：
+    ①、控制台
+    ②、邮件
+    ③、短信
+    ④、微信接口
     """
     disk_info = disk_stat('/data')
     total_disk_space = readable(disk_info['total_disk_space'])
