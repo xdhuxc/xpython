@@ -233,6 +233,7 @@ if __name__ == '__main__':
     test_load_average()
     """
     test_cpu_use_stat()
-    print('过去五秒钟CPU的使用率为：')
+    print('过去五秒钟CPU的使用率为：%.2f' % cpu_use_stat())
+
 
 
