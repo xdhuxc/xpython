@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import time
 
 # https://blog.csdn.net/huguangshanse00/article/details/17053789
 # http://blog.51cto.com/dragonball/1413369
@@ -54,9 +55,32 @@ def cpu_hardware_stat():
 
 # 参考资料
 # http://www.blogjava.net/fjzag/articles/317773.html
-def cpu_use_stat():
+def read_proc_stat():
+    """
+    计算cpu占用率
+    :return:
+    """
+    cpu_stat_dict = {}
+    with open('/proc/stat') as cpu_stat:
+        for line in cpu_stat:
+            line_list = line.split()
+            if len(line_list) == 11:
+                cpu_stat_dict[line_list[0]] = (line_list[1], line_list[2], line_list[3], line_list[4], line_list[5],
+                                               line_list[6], line_list[7], line_list[8], line_list[9], line_list[10])
+    return cpu_stat_dict
 
-    print()
+
+def cpu_use_stat():
+    cpu_time_tuple_one = read_proc_stat()['cpu']
+    # 暂停 5 秒
+    time.sleep(5)
+    cpu_time_tuple_two = read_proc_stat()['cpu']
+    # 计算总的CPU时间
+    total_time = float(sum_tuple(cpu_time_tuple_two) - sum_tuple(cpu_time_tuple_one))
+    idle = float(cpu_time_tuple_two[3] - cpu_time_tuple_one[3])
+
+    cpu_percentage_in_five_seconds = (total_time - idle) / total_time
+    return cpu_percentage_in_five_seconds
 
 
 def load_average():
@@ -129,6 +153,13 @@ def readable(file_size):
         return format((file_size / p), '.2f') + 'PB'
 
 
+def sum_tuple(numerical_tuple):
+    total = 0
+    for item in numerical_tuple:
+        total = total + int(item)
+    return total
+
+
 def test_disk_stat(path):
     disk_info = disk_stat(path)
     total_disk_space = readable(disk_info['total_disk_space'])
@@ -167,6 +198,19 @@ def test_load_average():
     print('每一核CPU在过去1分钟内的负载：%.4f' % (float(load_average_1) / float(len(cpu_hardware))))
 
 
+def test_cpu_use_stat():
+    cpu_time_tuple_one = cpu_use_stat()['cpu']
+    # 暂停 5 秒
+    time.sleep(5)
+    cpu_time_tuple_two = cpu_use_stat()['cpu']
+    # 计算总的CPU时间
+    total_time = float(sum_tuple(cpu_time_tuple_two) - sum_tuple(cpu_time_tuple_one))
+    idle = float(cpu_time_tuple_two[3] - cpu_time_tuple_one[3])
+
+    cpu_percentage = (total_time - idle) / total_time
+    print(cpu_percentage)
+
+
 if __name__ == '__main__':
     """
     检测以下指标：
@@ -179,7 +223,7 @@ if __name__ == '__main__':
     ②、邮件
     ③、短信
     ④、微信接口
-    """
+    
     print('内存信息：')
     test_memory_stat()
     print('磁盘信息：')
@@ -187,3 +231,8 @@ if __name__ == '__main__':
     test_disk_stat('/')
     print('负载信息：')
     test_load_average()
+    """
+    test_cpu_use_stat()
+    print('过去五秒钟CPU的使用率为：')
+
+
