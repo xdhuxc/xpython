@@ -51,7 +51,8 @@ sorted_dict = map(lambda x: {x: x_dict[x]}, sorted_key_list)
 print(sorted_dict)
 
 print('按值排序')
-sorted_key_list = sorted(x_dict, key=lambda x: x_dict[x])
+# reverse默认为False，升序排列，reverse=True为降序排列
+sorted_key_list = sorted(x_dict, key=lambda x: x_dict[x], reverse=True)
 print(sorted_key_list)
 sorted_dict = map(lambda x: {x: x_dict[x]}, sorted_key_list)
 print(sorted_dict)

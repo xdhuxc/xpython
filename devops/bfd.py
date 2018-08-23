@@ -84,15 +84,15 @@ def main(argv):
     base_dir = os.getcwd()
     # 默认显示500M以上的文件和目录
     min_size = 500
-    # 指定排序规则，默认为：asc，即升序。
-    sort = 'asc'
-    # 指定查找类型，默认为：all，即查找所有的文件和目录，可选项为：all，file，directory   -a -f -d
+    # 指定排序规则asc或desc，默认为：asc，即升序。
+    sort_type = 'asc'
+    # 指定查找类型，默认为：all，即查找所有的文件和目录，可选项为：all，file，dir
     xtype = 'all'
     # 指定查找层级，以base_dir为基础目录级计算，默认查找到最内层。
     level = 128
 
     try:
-        opts, args = getopt.getopt(argv, 'dstSLh', ['--size=', '--type=', '--sort=', '--level=', '--help='])
+        opts, args = getopt.getopt(argv, 'dstSh', ['--size=', '--type=', '--sort=', '--help='])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -105,28 +105,34 @@ def main(argv):
         elif opt in ('-t', '--type='): # -t all 或 --type=file
             xtype = arg
         elif opt in ('-S', '--sort='):
-            sort = arg
+            sort_type = arg
         elif opt in ('-s', '--size='):
             min_size = resolve(arg)
-        elif opt in ('-L', '--level='):
-            level = arg
         else:
             print("非法参数")
             usage()
+
+    file_dict, dir_dict = preprocess(base_dir)
+    if
+
 
 
 def usage():
     print('usage：python bfd.py [options] ')
 
 
-def sort(sort_dict):
+def sort(sort_dict, sort_type):
+    if sort_type == 'desc':
+        reverse = True
+    else:
+        reverse = False
     """
     按值对字典排序，
     :param sort_dict:
     :return:
     """
     print('指定排序方式，默认按升序排列')
-    sorted_key_list = sorted(sort_dict, key=lambda x: sort_dict[x])
+    sorted_key_list = sorted(sort_dict, key=lambda x: sort_dict[x], reverse=reverse)
     return map(lambda x: {x: sort_dict[x]}, sorted_key_list)
 
 
@@ -135,20 +141,20 @@ def size(base_dir, min_size):
     根据大小筛选文件和目录
     :param base_dir: 基础目录，也可能是文件
     :param min_size: 文件或目录的最小大小
-    :return: file_dict, directory_dict
+    :return: file_dict, dir_dict
     """
     print('指定查找的大小，默认显示大小超过500M的文件或目录')
-    file_dict, directory_dict = preprocess(base_dir)
+    file_dict, dir_dict = preprocess(base_dir)
     print(file_dict)
-    print(directory_dict)
+    print(dir_dict)
     for xfile, file_size in file_dict.items():
         if file_size < min_size:
             file_dict.pop(xfile)
-    for xdir, dir_size in directory_dict.items():
+    for xdir, dir_size in dir_dict.items():
         if dir_size < min_size:
-            directory_dict.pop(dir_size)
+            dir_dict.pop(dir_size)
 
-    return file_dict, directory_dict
+    return file_dict, dir_dict
 
 
 def resolve(xsize):
@@ -178,14 +184,14 @@ def xtype(base_dir, xtype):
     directory_list: [{directory_name, directory_size}]
     return file_list or directory_list
     """
-    file_dict, directory_dict = preprocess(base_dir)
+    file_dict, dir_dict = preprocess(base_dir)
     if xtype == "file":
         return file_dict
-    if xtype == "directory":
-        return directory_dict
+    if xtype == "dir":
+        return dir_dict
     # 如果选择全部，将两个字典合并返回
     if xtype == "all":
-        return dict(file_dict, **directory_dict)
+        return dict(file_dict, **dir_dict)
 
 
 def preprocess(base_dir):
@@ -195,7 +201,7 @@ def preprocess(base_dir):
     :return: file_list，directory_list
     """
     file_dict = {}
-    directory_dict = {}
+    dir_dict = {}
     xdhuxc_dir = unicode(base_dir)
     for root, dirs, files in os.walk(xdhuxc_dir):
         for xfile in files:
@@ -203,8 +209,8 @@ def preprocess(base_dir):
             file_dict.update({full_path: get_dir_size(full_path)})
         for xdir in dirs:
             full_path = os.path.join(root, unicode(xdir))
-            directory_dict.update({full_path: get_dir_size(full_path)})
-    return file_dict, directory_dict
+            dir_dict.update({full_path: get_dir_size(full_path)})
+    return file_dict, dir_dict
 
 
 def level():
