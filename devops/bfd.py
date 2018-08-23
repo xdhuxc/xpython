@@ -119,14 +119,15 @@ def usage():
     print('usage：python bfd.py [options] ')
 
 
-def sort(xdhuxc_dict):
+def sort(sort_dict):
     """
-
-    :param base_dir:
+    按值对字典排序，
+    :param sort_dict:
     :return:
     """
     print('指定排序方式，默认按升序排列')
-
+    sorted_key_list = sorted(sort_dict, key=lambda x: sort_dict[x])
+    return map(lambda x: {x: sort_dict[x]}, sorted_key_list)
 
 
 def size(base_dir, min_size):
@@ -217,5 +218,5 @@ if __name__ == '__main__':
     print(readable(result))
     print("Hello World")
     size(base_dir, 500)
-    #main(sys.argv[1:])
+    # main(sys.argv[1:])
 

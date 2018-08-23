@@ -35,3 +35,23 @@ print(xdhuxc_dict)
 xdhuxc_dict['wanghuan'] = '123456'
 xdhuxc_dict['lalala'] = '156'
 print(xdhuxc_dict)
+
+print('字典排序测试')
+x_dict = {}
+# 字典排序
+x_dict['a'] = 1
+x_dict['b'] = 3
+x_dict['c'] = -1
+x_dict['f'] = 129
+
+print('按键排序')
+sorted_key_list = sorted(x_dict)
+print(sorted_key_list)
+sorted_dict = map(lambda x: {x: x_dict[x]}, sorted_key_list)
+print(sorted_dict)
+
+print('按值排序')
+sorted_key_list = sorted(x_dict, key=lambda x: x_dict[x])
+print(sorted_key_list)
+sorted_dict = map(lambda x: {x: x_dict[x]}, sorted_key_list)
+print(sorted_dict)
