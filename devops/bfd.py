@@ -88,8 +88,6 @@ def main(argv):
     sort_type = 'asc'
     # 指定查找类型，默认为：all，即查找所有的文件和目录，可选项为：all，file，dir
     xtype = 'all'
-    # 指定查找层级，以base_dir为基础目录级计算，默认查找到最内层。
-    level = 128
 
     try:
         opts, args = getopt.getopt(argv, 'dstSh', ['--size=', '--type=', '--sort=', '--help='])
@@ -113,7 +111,7 @@ def main(argv):
             usage()
 
     file_dict, dir_dict = preprocess(base_dir)
-    if
+
 
 
 
