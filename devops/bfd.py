@@ -4,9 +4,10 @@
 import os
 import sys
 import getopt
+import time
 
 reload(sys)
-charset = 'utf-8'
+charset = os.environ.get('CHARSET') or 'utf-8'
 sys.setdefaultencoding(charset)  # 为了解决目录和文件名中文编码问题，
 
 # https://blog.csdn.net/beautygao/article/details/79231571
@@ -16,19 +17,18 @@ http://www.runoob.com/python/python-command-line-arguments.html
 https://www.cnblogs.com/saiwa/articles/5253713.html
 '''
 # 声明全局变量
-total_size = 0L
 
 
 def get_dir_size(base_dir):
-    global total_size
-    xdhuxc_dir = unicode(base_dir)
+    total_size = 0L
+    base_dir = unicode(base_dir)
     # 如果文件不存在，直接返回
-    if not os.path.exists(xdhuxc_dir):
-        print("%s 不存在" % xdhuxc_dir )
+    if not os.path.exists(base_dir):
+        print("%s 不存在" % base_dir )
         return 0
 
-    if os.path.isfile(xdhuxc_dir):
-        return os.path.getsize(xdhuxc_dir)
+    if os.path.isfile(base_dir):
+        return os.path.getsize(base_dir)
     '''
     os.walk()是一个简单易用的文件、目录遍历器，可以帮助我们高效地处理文件、目录方面的问题。
     os.walk()函数的声明为：
@@ -49,11 +49,12 @@ def get_dir_size(base_dir):
     如果topDown参数为真，walk会遍历top目录，与top目录中的每一个子目录。
     '''
 
-    for root, dirs, files in os.walk(xdhuxc_dir):
+    for root, dirs, files in os.walk(base_dir):
         # 处理root目录下的所有文件
-        for xfile in files:
-            total_size = total_size + os.path.getsize(os.path.join(root, xfile))
-
+        for file_item in files:
+            file_path = os.path.join(root, file_item)
+            if os.path.exists(file_path):
+                total_size = total_size + os.path.getsize(file_path)
     return total_size
 
 
@@ -111,15 +112,36 @@ def main(argv):
             usage()
 
     file_dict, dir_dict = preprocess(base_dir)
-
-
+    # 文件或目录最小大小处理
+    file_size_dict = bfd_size(file_dict, min_size)
+    dir_size_dict = bfd_size(dir_dict, min_size)
+    # 排序处理
+    sort_file_dict = bfd_size(file_size_dict, sort_type)
+    sort_dir_dict = bfd_size(dir_size_dict, sort_type)
+    # 类型处理
+    if xtype == 'file':
+        print_dict(sort_file_dict)
+        sys.exit(0)
+    elif xtype == 'dir':
+        print_dict(sort_dir_dict)
+        sys.exit(0)
+    elif xtype == 'all':
+        total_dict = dict(sort_file_dict, **sort_dir_dict)
+        print_dict(total_dict)
+        sys.exit(0)
 
 
 def usage():
     print('usage：python bfd.py [options] ')
 
 
-def sort(sort_dict, sort_type):
+def bfd_sort(sort_dict, sort_type):
+    """
+    对传入的字典sort_dict进行排序，排序规则由sort_type指定。
+    :param sort_dict:
+    :param sort_type:
+    :return: 排序后的字典
+    """
     if sort_type == 'desc':
         reverse = True
     else:
@@ -129,30 +151,21 @@ def sort(sort_dict, sort_type):
     :param sort_dict:
     :return:
     """
-    print('指定排序方式，默认按升序排列')
     sorted_key_list = sorted(sort_dict, key=lambda x: sort_dict[x], reverse=reverse)
     return map(lambda x: {x: sort_dict[x]}, sorted_key_list)
 
 
-def size(base_dir, min_size):
+def bfd_size(select_dict, min_size):
     """
     根据大小筛选文件和目录
-    :param base_dir: 基础目录，也可能是文件
-    :param min_size: 文件或目录的最小大小
-    :return: file_dict, dir_dict
+    :param select_dict: 待瘦身的字典
+    :param min_size: 最小大小
+    :return: 瘦身后的字典
     """
-    print('指定查找的大小，默认显示大小超过500M的文件或目录')
-    file_dict, dir_dict = preprocess(base_dir)
-    print(file_dict)
-    print(dir_dict)
-    for xfile, file_size in file_dict.items():
-        if file_size < min_size:
-            file_dict.pop(xfile)
-    for xdir, dir_size in dir_dict.items():
-        if dir_size < min_size:
-            dir_dict.pop(dir_size)
-
-    return file_dict, dir_dict
+    for key, value in select_dict.items():
+        if value < min_size:
+            select_dict.pop(key)
+    return select_dict
 
 
 def resolve(xsize):
@@ -163,33 +176,15 @@ def resolve(xsize):
     """
     print('解析字符串k，g，t等，返回字节数B')
     if xsize[-1] in ('k', 'K'):
-        return 1024*int(size[:-1])
+        return 1024*int(xsize[:-1])
     elif xsize[-1] in ('m', 'M'):
-        return 1024*1024*int(size[:-1])
+        return 1024*1024*int(xsize[:-1])
     elif xsize(-1) in ('g', 'G'):
-        return 1024*1024*1024*int(size[:-1])
+        return 1024*1024*1024*int(xsize[:-1])
     elif xsize(-1) in ('t', 'T'):
-        return 1024*1024*1024*1024*int(size[:-1])
+        return 1024*1024*1024*1024*int(xsize[:-1])
     else:
         return int(xsize)
-
-
-def xtype(base_dir, xtype):
-    print('指定查找的类型，文件或者目录')
-
-    """
-    file_list: [{file_name, file_size}]
-    directory_list: [{directory_name, directory_size}]
-    return file_list or directory_list
-    """
-    file_dict, dir_dict = preprocess(base_dir)
-    if xtype == "file":
-        return file_dict
-    if xtype == "dir":
-        return dir_dict
-    # 如果选择全部，将两个字典合并返回
-    if xtype == "all":
-        return dict(file_dict, **dir_dict)
 
 
 def preprocess(base_dir):
@@ -211,16 +206,61 @@ def preprocess(base_dir):
     return file_dict, dir_dict
 
 
-def level():
-    print('指定查找的层级')
+def print_dict(prinx_dict):
+    """
+    打印字典的键值
+    :param print_dict:
+    :return:
+    """
+    for key, value in prinx_dict.items():
+        print(readable(value) + "   " + key)
+
+
+def print_list(prinx_list):
+    """
+    打印列表的值，列表中的每一个元素为一个字典
+    :param prinx_list:
+    :return:
+    """
+    for item in prinx_list:
+        for key, value in item.items():
+            print(readable(value) + '   ' + key)
 
 
 if __name__ == '__main__':
-    base_dir = 'C:\\Users\\wanghuan\\Desktop\\电子书'
+    start_time = time.time()
+
+    """
+    base_dir = 'E:\\bak'
     result = get_dir_size(base_dir)
     print(result)
     print(readable(result))
     print("Hello World")
     size(base_dir, 500)
+    """
+    min_size = 500 * 1024 * 1024
+    sort_type = 'asc'
+    base_dir = 'E:\\bak'
+    file_dict, dir_dict = preprocess(base_dir)
+
+    # 文件或目录最小大小处理
+    file_size_dict = bfd_size(file_dict, min_size)
+    dir_size_dict = bfd_size(dir_dict, min_size)
+
+    # print_dict(file_size_dict)
+    # print_dict(dir_size_dict)
+
+    # 合并文件字典和目录字典
+    total_dict = dict(file_size_dict, **dir_size_dict)
+
+    # 排序处理
+    sorted_list = bfd_sort(total_dict, sort_type)
+
+    print_list(sorted_list)
+
+    # total_dict = dict(sort_file_dict, **sort_dir_dict)
+    # print_dict(total_dict)
     # main(sys.argv[1:])
+    end_time = time.time()
+    print('耗时%f 秒' % (end_time-start_time))
 
