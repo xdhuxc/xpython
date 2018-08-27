@@ -15,7 +15,7 @@ sys.setdefaultencoding(charset)
 
 marathon_url = "http://172.20.17.4:8080"
 
-mysql_conn = pymysql.connect(host='10.10.24.32', port=3306, user='root', password='Xdhuxc@163', database='marathon')
+mysql_conn = pymysql.connect(host='localhost', port=3306, user='root', password='19940423', database='marathon')
 
 # 日志模块配置
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s-%(levelname)s : %(message)s')
