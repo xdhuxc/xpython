@@ -25,7 +25,7 @@ def get_dir_size(base_dir):
     # 如果文件不存在，直接返回
     if not os.path.exists(base_dir):
         print("%s 不存在" % base_dir )
-        return 0
+        return None
 
     if os.path.isfile(base_dir):
         return os.path.getsize(base_dir)
