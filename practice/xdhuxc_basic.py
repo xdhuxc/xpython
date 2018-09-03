@@ -58,6 +58,14 @@ def get_dir_size_xdhuxc(base_dir):
 在 Python 中，False, 0, '', [], {}, ()都可以视为假。
 """
 
+"""
+__name__ 是标识模块的名字的一个系统变量，这里分两种情况：
+1、假如当前模块是主模块，也就是调用其他模块的模块，那么此模块的名字就是__main__，通过if判断这样就可以执行"__main__"后面的主函数内容
+2、假如此模块是被import的，则此模块名字为文件名称（不加文件全名后面的.py），通过if判断就可以跳过"__main__"后面的内容。
+
+通过这种方式，python就可以分清楚哪些是主函数，进入主函数执行，并且可以调用其他模块的各个函数等等。
+"""
+
 if __name__ == '__main__':
     xdhuxc = '123K'
     print(type(int(xdhuxc[:-1])))
@@ -65,5 +73,6 @@ if __name__ == '__main__':
     total_size = 0L
     src_dir = 'C:\\Users\\Administrator\\Desktop\yztc'
     #print(get_dir_size(src_dir))
-    print(get_dir_size_xdhuxc(src_dir))
+    #print(get_dir_size_xdhuxc(src_dir))
     sys.getdefaultencoding()
+    print(__filename__)
