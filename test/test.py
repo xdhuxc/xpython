@@ -30,3 +30,5 @@ print(b3)
 # 差集
 b4 = [item for item in b1 if item not in b2]
 print(b4)
+http://www.cnblogs.com/codingmylife/archive/2010/06/06/1752807.html
+https://www.cnblogs.com/goodhacker/p/3360721.html
