@@ -20,3 +20,7 @@ for item in original_list:
     if item not in new_list:
         new_list.append(item)
 print(new_list)
+
+original_tuple = tuple(original_list)
+print(original_tuple)
+
