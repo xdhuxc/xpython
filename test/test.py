@@ -21,3 +21,12 @@ def change_global(x):
 
 change_global(20)
 print(c)
+
+b1 = [1, 2, 3, 4]
+b2 = [2, 4, 5, 7]
+# 交集
+b3 = [item for item in b1 if item in b2]
+print(b3)
+# 差集
+b4 = [item for item in b1 if item not in b2]
+print(b4)
