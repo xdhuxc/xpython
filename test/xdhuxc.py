@@ -8,6 +8,7 @@ original_list = [6, 6, 6, 6, 6, 6, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4]
 result_list = list(set(original_list))
 print(result_list)
 
+
 """
 使用集合方式的同时保证顺序性
 """
