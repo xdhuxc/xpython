@@ -6,13 +6,13 @@ xdhuxc_dict = {'a': '1', 'b': '2', 'c': '3', 'd': -1}
 # 遍历 key 值
 # 在使用上，for key in xdhuxc_dict 和 for key in xdhuxc_dict.keys()完全等价
 for key in xdhuxc_dict:
-    print(key + ' : ' + xdhuxc_dict[key])
+    print(key + ' : ' + str(xdhuxc_dict[key]))
 
 # 根据值对字典排序
 
 
 for key in xdhuxc_dict.keys():
-    print(key + ' : ' + xdhuxc_dict[key])
+    print(key + ' : ' + str(xdhuxc_dict[key]))
 
 # 遍历 value 值
 for value in xdhuxc_dict.values():
@@ -25,10 +25,10 @@ for kv in xdhuxc_dict.items():
 # 遍历字典键值
 # 在使用上，for key, value in xdhuxc_dict.items() 和for (key, value) in xdhuxc_dict.items() 完全等价
 for key, value in xdhuxc_dict.items():
-    print(key + '--->' + value)
+    print(key + '--->' + str(value))
 
 for (key, value) in xdhuxc_dict.items():
-    print(key + '--->' + value)
+    print(key + '--->' + str(value))
 
 xdhuxc_dict.update({'d': '2'})
 print(xdhuxc_dict)
