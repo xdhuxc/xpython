@@ -36,7 +36,9 @@ print('===============================')
 
 def foo(*args, **kwargs):
     print('args=', args)
+    print type(args)
     print('kwargs', kwargs)
+    print type(kwargs)
     print('---------------------------------')
 
 
