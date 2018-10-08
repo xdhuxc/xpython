@@ -31,3 +31,5 @@ pip install redis
 https://www.cnblogs.com/progor/p/8567640.html
 
 https://www.jianshu.com/p/2639549bedc8
+
+https://www.jianshu.com/p/2639549bedc8
